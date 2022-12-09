@@ -7,6 +7,7 @@ const schema = require('../docs/schema.json');
 const { loadSchema } = require('./helpers');
 const validArticles = path.join( __dirname, 'fixtures', 'valid', '*.json' );
 const invalidArticles = path.join( __dirname, 'fixtures', 'invalid', '*.json' );
+const articlesToValidate = path.join( __dirname, 'fixtures', 'validate', '*.json' );
 const inspectOptions = { showHidden: true, depth: null };
 
 describe('Apple News Format schema', () => {
@@ -45,6 +46,16 @@ describe('Apple News Format schema', () => {
 
         assert.isFalse( valid, `${path.basename(article)} is valid, but shouldn't be` );
         assert.isAtLeast( validate.errors.length, 1 );
+      });
+    });
+  });
+
+  describe('Articles to validate', () => {
+    glob.sync(articlesToValidate).forEach( article => {
+      it( path.basename(article), () => {
+        const valid = validate( require(article) );
+
+        assert.isTrue( valid, util.inspect( validate.errors, inspectOptions ) );
       });
     });
   });
